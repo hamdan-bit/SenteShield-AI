@@ -3,13 +3,13 @@
 <desc id="desc">A protective shield with an S-shaped signal.</desc>
 <style>
   :root{--logo-fill:#0d1320;--logo-stroke:#ffffff}
-  .tile{fill:var(--logo-fill)}
-  .shield{fill:none;stroke:var(--logo-stroke);stroke-width:1.8;stroke-linejoin:round}
-  .signal{fill:none;stroke:var(--logo-stroke);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-  .dot{fill:var(--logo-fill);stroke:var(--logo-stroke);stroke-width:1.5}
+  .tile{fill:var(--logo-fill);stroke:var(--logo-stroke);stroke-width:2;stroke-linejoin:round}
+  .shield{fill:none;stroke:var(--logo-stroke);stroke-width:2.3;stroke-linejoin:round}
+  .signal{fill:none;stroke:var(--logo-stroke);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .dot{fill:var(--logo-fill);stroke:var(--logo-stroke);stroke-width:1.6}
   @media (prefers-color-scheme: light){:root{--logo-fill:#ffffff;--logo-stroke:#3b7a35}}
 </style>
-<rect class="tile" x="7" y="7" width="50" height="50" rx="15"/>
+<rect class="tile" x="4" y="4" width="56" height="56" rx="17"/>
 <path class="shield" d="M32 14 45.5 19.7V29.4c0 8.8-5.5 15-13.5 19.2-8-4.2-13.5-10.4-13.5-19.2v-9.7L32 14Z"/>
 <path class="signal" d="M37.7 24.4c-1.6-1.5-3.6-2.3-6.1-2.3-3.7 0-6.2 1.9-6.2 4.6 0 2.5 2.2 3.4 6.2 4.4 3.8 1 6.2 2.1 6.2 4.7s-2.5 4.6-6.1 4.6c-2.9 0-5.1-1-7-2.9"/>
 <circle class="dot" cx="41.2" cy="20.2" r="2.2"/>

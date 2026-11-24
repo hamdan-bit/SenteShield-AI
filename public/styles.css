@@ -57,5 +57,10 @@
 }
 
 /* SenteShield original vector identity: preserve the full mark on every theme. */
-.brand-icon{background:transparent;box-shadow:none}
-.brand-mark{display:block;width:100%;height:100%}.brand-mark__tile{fill:var(--brand-logo-fill)}.brand-mark__shield{fill:none;stroke:var(--brand-logo-stroke);stroke-width:1.8;stroke-linejoin:round}.brand-mark__signal{fill:none;stroke:var(--brand-logo-stroke);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.brand-mark__signal-dot{fill:var(--brand-logo-fill);stroke:var(--brand-logo-stroke);stroke-width:1.5}
+/* Make the entire logo visible; this outranks the legacy .brand-icon svg rule. */
+.brand-icon{width:46px;height:46px;background:transparent;box-shadow:none}
+.brand-icon > svg.brand-mark{display:block;width:100%;height:100%;stroke:none;overflow:visible}
+.brand-icon .brand-mark__tile{fill:var(--brand-logo-fill);stroke:var(--brand-logo-stroke);stroke-width:2;stroke-linejoin:round}
+.brand-icon .brand-mark__shield{fill:none;stroke:var(--brand-logo-stroke);stroke-width:2.3;stroke-linejoin:round}
+.brand-icon .brand-mark__signal{fill:none;stroke:var(--brand-logo-stroke);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.brand-icon .brand-mark__signal-dot{fill:var(--brand-logo-fill);stroke:var(--brand-logo-stroke);stroke-width:1.6}

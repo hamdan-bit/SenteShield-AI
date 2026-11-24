@@ -1,3 +1,11 @@
+## Logo outline visibility fix — November 24, 2026
+
+- Fixed an inherited 24px icon rule overriding the new SenteShield SVG's size.
+- Added the missing thin border around the outer logo tile in both modes, with matching shield and S strokes.
+- Daylight: white fill and green outline. Midnight: dark fill and white outline.
+- Synchronised favicon theme with dashboard preference and added separate theme SVGs.
+- Verified actual computed outline colors and 46px size in Chromium, plus 36 passing automated tests.
+
 ## Logo theme polish — November 24, 2026
 
 - Changed the SenteShield mark to a **thin green outline with white fill in light mode**.

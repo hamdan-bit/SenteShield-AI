@@ -295,6 +295,7 @@ function applySettings(settings){
   document.documentElement.dataset.theme=settings.theme;
   document.documentElement.dataset.reduceMotion=String(settings.motion==='reduced');
   const themeColor=document.querySelector('meta[name="theme-color"]');if(themeColor)themeColor.content=settings.theme==='light'?'#edf1f4':'#0a0e17';
+  const favicon=document.querySelector('link[rel="icon"]');if(favicon)favicon.href=settings.theme==='light'?'./favicon-light.svg':'./favicon-dark.svg';
 }
 async function checkConnection(){
   const status=$('connection');status.classList.remove('basic','offline');

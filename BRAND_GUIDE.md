@@ -43,3 +43,7 @@ In the dashboard, the logo responds to the interface theme:
 - **Dark mode:** white outline with a dark fill matching the dashboard
 
 The standalone SVG and favicon use `prefers-color-scheme`. The inline sidebar logo follows the selected dashboard preference even if it differs from the device setting.
+
+## Visible logo outline correction
+
+The live logo is now 46px wide rather than the 24px imposed by the older icon selector. A thin outline surrounds the outer tile, with separately controlled shield and S strokes. Daylight uses white fill / green outline; Midnight uses sidebar-dark fill / white outline. The browser favicon also changes immediately when the dashboard theme changes (even if the device theme differs).
