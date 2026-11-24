@@ -55,3 +55,7 @@
   .history-time{display:block;grid-column:2;justify-self:start;font-size:10px}
   .history-arrow{display:none}
 }
+
+/* SenteShield original vector identity: preserve the full mark on every theme. */
+.brand-icon{background:transparent;box-shadow:none}
+.brand-icon img{display:block;width:100%;height:100%;object-fit:contain}

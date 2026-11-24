@@ -1,3 +1,10 @@
+## Brand identity refresh — November 24, 2026
+
+- Original shield-and-S SVG logo inspired by the icon + wordmark approach reviewed on BrandCrowd; no third-party template copied.
+- Matching favicon and horizontal versions for dark/light backgrounds.
+- Sidebar uses the new scalable mark; styling works in both interface themes.
+- Added [BRAND_GUIDE.md](BRAND_GUIDE.md) and SVG asset regression tests.
+
 # SenteShield — Release 4.0: Link Intelligence
 
 **Date:** 24 November 2026  

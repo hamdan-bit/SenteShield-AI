@@ -4,6 +4,10 @@
 
 SenteShield is a privacy-conscious **Uganda-focused message and suspicious link warning app** for SMS, WhatsApp and mobile money requests. It looks for warning signs and gives practical next steps. It does **not** authenticate senders, verify transactions or guarantee safety.
 
+## Brand identity
+
+Original SenteShield SVG shield-and-S brand mark, matching favicon and light/dark horizontal wordmarks. See [BRAND_GUIDE.md](BRAND_GUIDE.md) for assets and colors.
+
 ## Features
 
 - Responsive, keyboard-accessible dashboard with midnight and daylight themes
