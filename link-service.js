@@ -111,11 +111,26 @@ export async function lookupWebRisk(url,key,{fetchImpl=fetch,timeoutMs=4500}={})
     const timer=setTimeout(()=>controller.abort(),timeoutMs);
     try{
       const res=await fetchImpl(query.toString(),{signal:controller.signal,headers:{Accept:'application/json'},redirect:'error'});
-      if(!res.ok)return {status:'unavailable'};
+      if(!res.ok){
+        // Log only a status code and allowlisted provider category.
+        // Never log the submitted URL, API key or raw Google response.
+        let providerStatus = 'UNKNOWN';
+        try {
+          const body = await res.json();
+          const safeStatuses = new Set(['INVALID_ARGUMENT','PERMISSION_DENIED','UNAUTHENTICATED','RESOURCE_EXHAUSTED','FAILED_PRECONDITION','UNAVAILABLE']);
+          if(safeStatuses.has(body?.error?.status))providerStatus=body.error.status;
+        } catch { /* Some responses are not JSON. */ }
+        console.warn(`[SenteShield Web Risk] lookup error HTTP ${Number(res.status)||0}, category ${providerStatus}`);
+        return {status:'unavailable'};
+      }
       const data=await res.json();
       return data?.threat?.threatTypes?.length?{status:'matched',types:data.threat.threatTypes.filter(x=>typeof x==='string').slice(0,3)}:{status:'no-match'};
     }finally{clearTimeout(timer)}
-  }catch{return {status:'unavailable'}}
+  }catch(error){
+    const category=error?.name==='AbortError'?'TIMEOUT':'NETWORK_OR_RESPONSE_ERROR';
+    console.warn(`[SenteShield Web Risk] lookup error ${category}`);
+    return {status:'unavailable'};
+  }
 }
 export async function scanLink(input,context='',{webRiskKey=process.env.WEB_RISK_API_KEY||'',fetchImpl=fetch}={}) {
   const assessment=assessLink(input,context);
