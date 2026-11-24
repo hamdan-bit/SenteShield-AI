@@ -34,3 +34,7 @@ Use blurred panels selectively. Risk notices use text labels as well as color. L
 ## Design constraints
 
 No login, no messages database, no artificial risk percentages, no unverified official partner logos, no external animation package. A user can try the interface, see warning patterns and scan a message immediately.
+
+## Release 4 — Link Intelligence
+
+The Link scanner reuses the midnight/mineral green system, glass panels, mint accents, accessible result severity colors and on-device responsive layout. The destination preview is text-only, never a navigable iframe or clickable URL. On phones, the single-column check form precedes explanation cards so the main interaction appears quickly. Results clearly distinguish URL/offer analysis from optional external threat-list matches. The orbited shield art is decorative and respects reduced-motion settings.

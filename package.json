@@ -1,8 +1,8 @@
 {
   "name": "senteshield-ai",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
-  "description": "SenteShield \u2014 responsive Uganda-focused message safety workspace",
+  "description": "SenteShield \u2014 Uganda-focused message and suspicious investment link safety workspace",
   "type": "module",
   "engines": {
     "node": ">=20"

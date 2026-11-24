@@ -15,7 +15,7 @@ const localChecks = [
   {re:/(?:https?:\/\/|www\.|bit\.ly|tinyurl)/i,label:'Unverified link'},
   {re:/\b(ura|mtn|airtel|police|bank|official|support agent)\b/i,label:'Company or authority named'}
 ];
-const viewTitles = {scan:'Message scanner',activity:'Recent checks',safety:'Safety guide'};
+const viewTitles = {scan:'Message scanner',links:'Link scanner',activity:'Recent checks',safety:'Safety guide'};
 const message = $('message');
 const analyze = $('analyze');
 const sessionChecks = [];
@@ -157,7 +157,7 @@ function renderResult(data, mode='demo', record=true) {
   box.hidden=false;
   if(record){
     // The session timeline never stores the user's original message.
-    sessionChecks.unshift({time:Date.now(),risk,mode,data:JSON.parse(JSON.stringify(data))});
+    sessionChecks.unshift({time:Date.now(),risk,mode,kind:'message',data:JSON.parse(JSON.stringify(data))});
     if(sessionChecks.length>12)sessionChecks.pop();
     $('historyCount').textContent=String(sessionChecks.length);
   }
@@ -167,6 +167,7 @@ function setLoading(active){
   scanning=active;analyze.disabled=active;analyze.setAttribute('aria-busy',String(active));
   $('loadingOverlay').hidden=!active;
   $('analyzeText').textContent=active?'Checking…':'Check message';
+  if(active){$('loadingTitle').textContent='Checking your message';$('loadingSubtitle').textContent='Looking for warning signs and safer next steps.';}
 }
 async function runScan(){
   if(scanning)return;
@@ -229,10 +230,10 @@ function renderHistory(){
   sessionChecks.forEach((entry)=>{
     const btn=node('button','history-item');btn.type='button';
     const emblem=node('span',`history-icon ${entry.risk}`);emblem.append(icon('shield'));
-    const label=node('span','history-text');label.append(node('strong','',`${entry.risk[0].toUpperCase()+entry.risk.slice(1)} risk · ${entry.mode==='ai'?'Detailed':'Quick'} check`),node('span','',entry.data.summary||'Message check'));
+    const label=node('span','history-text');label.append(node('strong','',`${entry.risk[0].toUpperCase()+entry.risk.slice(1)} risk · ${entry.kind==='link'?'Link':entry.mode==='ai'?'Detailed':'Quick'} check`),node('span','',entry.data.summary||'Message check'));
     const time=node('time','history-time',new Date(entry.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
     btn.append(emblem,label,time,icon('arrow','history-arrow'));
-    btn.addEventListener('click',()=>{changeView('scan');renderResult(entry.data,entry.mode,false);});list.append(btn);
+    btn.addEventListener('click',()=>{if(entry.kind==='link'){changeView('links');renderLinkResult(entry.data,false);}else{changeView('scan');renderResult(entry.data,entry.mode,false);}});list.append(btn);
   });
 }
 
@@ -241,7 +242,7 @@ function closeDialog(){if(dialog.open)dialog.close();document.body.classList.rem
 $('closeDialog').addEventListener('click',closeDialog);
 dialog.addEventListener('close',()=>document.body.classList.remove('dialog-open'));
 dialog.addEventListener('click',event=>{if(event.target===dialog)closeDialog();});
-function dialogMarkup(title,body){const content=$('dialogContent');content.replaceChildren();content.append(node('h2','',title),...body);}
+function dialogMarkup(title,body){const content=$('dialogContent');content.replaceChildren();const heading=node('h2','',title);heading.id='dialogTitle';content.append(heading,...body);}
 function paragraph(text){return node('p','',text);}
 function bulletList(lines){const ul=node('ul','dialog-list');for(const line of lines)ul.append(node('li','',line));return ul;}
 function dialogActions(buttons){const area=node('div','dialog-actions');for(const item of buttons){const button=node('button',item.className||'secondary-btn',item.text);button.type='button';button.addEventListener('click',item.click);area.append(button);}return area;}
@@ -249,13 +250,13 @@ function openDialog(type){
   closeMenu();
   if(type==='help')dialogMarkup('A safer way to check',[
     paragraph('When an unexpected message asks you for money, a code, or an urgent response:'),
-    bulletList(['Pause. Do not click links or send money immediately.','Check the sender using an official app or a phone number you found yourself.','Never disclose a PIN, OTP or password, even to someone claiming to be support.','Use this scanner for clues, not as proof that a sender is genuine.']),
+    bulletList(['Use the Link scanner for unfamiliar URLs. It does not open the page or confirm a business license.','Pause. Do not click links or send money immediately.','Check the sender using an official app or a phone number you found yourself.','Never disclose a PIN, OTP or password, even to someone claiming to be support.','Use this scanner for clues, not as proof that a sender is genuine.']),
     node('div','dialog-note','If money has already been sent, contact your provider promptly through its official support channels.'),
     dialogActions([{text:'Got it',className:'primary-btn',click:closeDialog}])
   ]);
   else if(type==='privacy')dialogMarkup('Your privacy matters',[
     paragraph('SenteShield does not require sign-up and does not save your submitted message in a database.'),
-    bulletList(['Instant pattern hints run in your browser.','When you select Check message, a masked version of the text is sent to the SenteShield server.','If detailed analysis is configured, the masked text is processed by the model provider.','Phone numbers, emails and some code patterns are masked, but automatic masking can miss details. Remove anything private yourself.','Recent checks contain result summaries only and stay in this tab’s memory. They are cleared when you reload.']),
+    bulletList(['Instant pattern hints run in your browser.','When you select Check message, a masked version of the text is sent to the SenteShield server.','If detailed analysis is configured, the masked text is processed by the model provider.','Phone numbers, emails and some code patterns are masked, but automatic masking can miss details. Remove anything private yourself.','Link scans inspect URL structure and offer claims without opening the submitted page.','If Google Web Risk is enabled by the site owner, the submitted URL is shared with Google for a threat-list lookup. This may include its query parameters: remove sensitive tokens first.','A missing threat-list match is not certification that a site is safe.','Recent checks contain result summaries and hostnames only, and are cleared when you reload.']),
     node('div','dialog-note','A risk label is a cautionary assessment, not proof of an authentic or fraudulent sender.'),
     dialogActions([{text:'Understood',className:'primary-btn',click:closeDialog}])
   ]);
@@ -306,6 +307,131 @@ async function checkConnection(){
     $('connectionText').textContent=data.aiConfigured?'Full check ready':'Quick check ready';
   }catch{status.classList.add('offline');$('connectionText').textContent='Service unavailable';}
 }
+
+
+// Link Intelligence: no submitted URL is opened, embedded, or requested by the browser.
+const linkInput=$('linkInput');
+const linkContext=$('linkContext');
+const linkSamples={
+  investment:{link:'https://hut8-offer.example/register?ref=UG124',context:'Join Hut 8 investment Uganda, deposit UGX 100,000 and earn guaranteed 20% daily returns.'},
+  referral:{link:'https://myd-cash.example/signup?ref=INVITE123',context:'Join our earning app, deposit UGX 50,000, recruit 3 friends and earn daily task commission.'},
+  short:{link:'https://bit.ly/reward-claim-demo',context:'Click to claim a prize. Pay the activation fee today to unlock your cash.'},
+  ordinary:{link:'https://www.wikipedia.org/wiki/Uganda',context:''}
+};
+let linkBusy=false;
+let latestLink=null;
+function pickLinkExample(active){
+  for(const btn of document.querySelectorAll('[data-link-example]'))btn.classList.toggle('selected',btn===active);
+}
+function extractPreview(text){
+  const found=text.match(/https?:\/\/[^\s<>"'`]+|www\.[^\s<>"'`]+/i);
+  const candidate=(found?.[0]||text.trim()).replace(/[.,;!?\])}]+$/g,'');
+  if(!candidate)return null;
+  try{
+    const url=new URL(/^https?:\/\//i.test(candidate)?candidate:`https://${candidate}`);
+    if(!['http:','https:'].includes(url.protocol)||!url.hostname.includes('.'))return null;
+    return url.hostname;
+  }catch{return null;}
+}
+function updateLinkPreview(){
+  $('linkChars').textContent=`${linkInput.value.length} / 2100`;
+  const hostname=extractPreview(linkInput.value);
+  $('linkHost').textContent=hostname||'Paste a link to see the domain';
+  $('linkDestination').classList.toggle('has-link',Boolean(hostname));
+  $('linkError').hidden=true;
+  if(!$('linkResults').hidden){$('linkResults').hidden=true;latestLink=null;}
+}
+linkInput.addEventListener('input',()=>{pickLinkExample(null);updateLinkPreview();});
+linkContext.addEventListener('input',()=>{if(!$('linkResults').hidden){$('linkResults').hidden=true;latestLink=null;}});
+$('linkClear').addEventListener('click',()=>{linkInput.value='';linkContext.value='';pickLinkExample(null);updateLinkPreview();linkInput.focus();});
+$('linkPaste').addEventListener('click',async()=>{
+  try{const pasted=await navigator.clipboard.readText();if(!pasted)throw new Error('Empty clipboard');linkInput.value=pasted.slice(0,2100);pickLinkExample(null);updateLinkPreview();linkInput.focus();notify('Pasted. Remove any private codes before scanning.');}
+  catch{notify('Tap the link field and use Paste on your device.');linkInput.focus();}
+});
+$('contextToggle').addEventListener('click',()=>{
+  const expanded=$('contextToggle').getAttribute('aria-expanded')!=='true';
+  $('contextToggle').setAttribute('aria-expanded',String(expanded));
+  $('contextContainer').hidden=!expanded;
+  if(expanded)linkContext.focus();
+});
+for(const btn of document.querySelectorAll('[data-link-example]'))btn.addEventListener('click',()=>{
+  const example=linkSamples[btn.dataset.linkExample];
+  linkInput.value=example.link;linkContext.value=example.context;
+  $('contextContainer').hidden=!example.context;
+  $('contextToggle').setAttribute('aria-expanded',String(Boolean(example.context)));
+  pickLinkExample(btn);updateLinkPreview();
+  if(window.innerWidth<760)scrollToElement($('linkInput'));
+});
+function renderLinkResult(data,record=true){
+  const risk=['low','medium','high'].includes(data.risk)?data.risk:'medium';
+  latestLink=data;
+  const results=$('linkResults');results.hidden=false;
+  const verdict=$('linkVerdict');verdict.classList.remove('risk-low','risk-medium','risk-high');verdict.classList.add(`risk-${risk}`);
+  $('linkVerdictMode').textContent=data.checked?.reputation==='matched'?'THREAT LIST MATCH':'URL & OFFER SCREENING';
+  $('linkVerdictTitle').textContent=data.status||'Review advised';
+  $('linkSummary').textContent=data.summary||'Verify this link independently.';
+  $('linkRiskPill').textContent=risk==='high'?'HIGH CAUTION':risk==='medium'?'REVIEW':'LOWER SIGNALS';
+  $('resultHostname').textContent=data.hostname||'Unknown destination';
+  $('linkOfferStatus').textContent=data.checked?.offer?'Checked':'Not supplied';
+  const reputation=data.checked?.reputation||'not-configured';
+  $('linkReputation').textContent=({matched:'Threat found','no-match':'No listed match','not-configured':'Not enabled','not-checked':'Skipped','unavailable':'Unavailable'})[reputation]||'Not checked';
+  $('repDot').className='method-dot'+(reputation==='matched'?' warn':reputation==='no-match'?' checked':'');
+  const findings=$('linkFindings');findings.replaceChildren();
+  const entries=Array.isArray(data.signals)?data.signals:[];
+  if(!entries.length)findings.append(node('p','flag-empty','No common warning patterns detected. This does not verify the website or the person behind it.'));
+  else for(const entry of entries.slice(0,8)){
+    const item=node('div','finding');item.append(node('strong','',entry.title||'Warning sign'),node('p','',entry.detail||'Review the site independently.'));findings.append(item);
+  }
+  const steps=$('linkActions');steps.replaceChildren();
+  for(const item of(Array.isArray(data.actions)?data.actions:[]).slice(0,4))steps.append(node('li','',item));
+  if(record){
+    sessionChecks.unshift({time:Date.now(),risk,kind:'link',mode:'link',data:JSON.parse(JSON.stringify(data))});
+    if(sessionChecks.length>12)sessionChecks.pop();
+    $('historyCount').textContent=String(sessionChecks.length);
+  }
+  window.requestAnimationFrame(()=>scrollToElement(results));
+}
+function setLinkBusy(value){
+  linkBusy=value;$('checkLink').disabled=value;$('checkLink').setAttribute('aria-busy',String(value));
+  $('checkLinkText').textContent=value?'Inspecting…':'Inspect link';
+  $('loadingOverlay').hidden=!value;
+  if(value){$('loadingTitle').textContent='Inspecting the link';$('loadingSubtitle').textContent='Checking its address and the claims made about it. The destination stays unopened.';}
+}
+async function runLinkScan(){
+  if(linkBusy||scanning)return;
+  const link=linkInput.value.trim();
+  const context=linkContext.value.trim();
+  if(!link){$('linkError').textContent='Paste a website link first.';$('linkError').hidden=false;linkInput.focus();return;}
+  if(link.length>2100||context.length>1500){$('linkError').textContent='Your input is too long.';$('linkError').hidden=false;return;}
+  $('linkError').hidden=true;setLinkBusy(true);
+  const controller=new AbortController();scanController=controller;
+  const timer=setTimeout(()=>controller.abort('timeout'),15000);
+  try{
+    const response=await fetch('/api/check-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({link,context}),signal:controller.signal,cache:'no-store'});
+    const data=await response.json().catch(()=>null);
+    if(!response.ok)throw new Error(data?.error||'Link check unavailable.');
+    if(!data?.result)throw new Error('Unexpected link check response.');
+    renderLinkResult(data.result);
+    if(data.result.checked?.reputation==='not-configured')notify('URL checked. External threat-list checking is not enabled.');
+  }catch(error){
+    if(controller.signal.aborted){if(controller.signal.reason!=='user'){$('linkError').textContent='Link check timed out. Try again.';$('linkError').hidden=false;}else notify('Link check cancelled.');}
+    else{$('linkError').textContent=error?.message||'Unable to inspect link.';$('linkError').hidden=false;}
+  }finally{clearTimeout(timer);if(scanController===controller)scanController=null;setLinkBusy(false);}
+}
+$('checkLink').addEventListener('click',runLinkScan);
+linkInput.addEventListener('keydown',event=>{if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();runLinkScan();}});
+$('newLinkCheck').addEventListener('click',()=>{latestLink=null;$('linkResults').hidden=true;linkInput.value='';linkContext.value='';pickLinkExample(null);updateLinkPreview();linkInput.focus({preventScroll:true});scrollToElement($('linkInput'));});
+function linkResultText(){
+  if(!latestLink)return'';
+  return `SenteShield link review: ${latestLink.status}\nDomain: ${latestLink.hostname}\n\n${latestLink.summary}\n\nWarning signs:\n${(latestLink.signals||[]).map(x=>'- '+x.title+': '+x.detail).join('\n')||'No obvious patterns detected'}\n\nNext steps:\n${(latestLink.actions||[]).join('\n')}\n\nA link check cannot guarantee safety. Reputation: ${latestLink.checked?.reputation||'not checked'}.`;
+}
+$('copyLinkResult').addEventListener('click',()=>{if(latestLink)copyText(linkResultText());});
+$('shareLinkResult').addEventListener('click',async()=>{
+  if(!latestLink)return;
+  if(navigator.share){try{await navigator.share({title:'SenteShield link review',text:linkResultText()});}catch(e){if(e.name!=='AbortError')notify('Sharing is unavailable.');}}
+  else await copyText(linkResultText());
+});
+updateLinkPreview();
 
 // Dialog, focus, and keyboard interactions have no external dependencies.
 window.addEventListener('keydown',event=>{

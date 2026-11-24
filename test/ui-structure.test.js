@@ -8,7 +8,7 @@ const css=read('../public/styles.css');
 const js=read('../public/app.js');
 
 test('scanner and app workspace expose working controls',()=>{
-  for(const id of ['message','analyze','results','liveSignals','signalCount','view-activity','view-safety','appDialog','loadingOverlay','cancelScan','toast','menuBtn']){
+  for(const id of ['message','analyze','results','view-links','linkInput','linkContext','checkLink','linkResults','linkFindings','liveSignals','signalCount','view-activity','view-safety','appDialog','loadingOverlay','cancelScan','toast','menuBtn']){
     assert.match(html,new RegExp(`id="${id}"`),`Missing UI control ${id}`);
   }
   assert.match(html,/aria-labelledby="mainTitle"/);
@@ -24,6 +24,6 @@ test('assets use relative paths and mobile layouts exist',()=>{
 });
 
 test('frontend exposes expected user flows without including credentials',()=>{
-  for(const feature of ['runScan','openDialog','changeView','renderHistory','renderSignals','abort'])assert.ok(js.includes(feature));
+  for(const feature of ['runScan','runLinkScan','renderLinkResult','openDialog','changeView','renderHistory','renderSignals','abort'])assert.ok(js.includes(feature));
   assert.doesNotMatch(js,/AQ\.Ab8RN6J4|AIza[0-9A-Za-z_-]{10,}/);
 });

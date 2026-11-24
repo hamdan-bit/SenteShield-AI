@@ -1,3 +1,39 @@
+# SenteShield — Release 4.0: Link Intelligence
+
+**Date:** 24 November 2026  
+**Branch:** `main`  
+**Focus:** Detect potential investment/referral website scams, without opening untrusted links.
+
+## New features
+
+- Added a dedicated **Link scanner** destination in dashboard navigation and a mobile-friendly workspace for checking URLs or WhatsApp messages that contain URLs.
+- Optional offer description lets users add the investment pitch. This improves risk assessments when the URL alone reveals little.
+- Shows a non-clickable destination preview and a clear **Not opened** indicator.
+- Added synthetic demonstration cases for a Hut 8-like fake investment pitch, MYD-like referral earnings, shortened links, and an ordinary public HTTPS URL. Demo links use reserved `.example` domains.
+- Added address-pattern checks for domain lookalikes, encoded international domains, misleading `@` usernames, shorteners, IPs, non-HTTPS schemes, excessive subdomains, and suspicious query parameters.
+- Added evidence-based investment-pitch checks for promises of guaranteed returns, upfront deposits, recruitment commissions and account credentials.
+- Added an explicit warning on Hut 8-named domains that are not on the company-published `hut8.com` domain; does not accuse the legitimate company of wrongdoing.
+- Added optional **Google Cloud Web Risk** threat-list lookup through a fixed API endpoint. No submitted link is fetched, redirected to, embedded, or visited. Web Risk requires its own separately configured server-side key. Its absence and errors are displayed transparently.
+- Added noncommittal risk labels, transparent analysis methods, share/copy advice and session-only link assessment summaries.
+- Updated the existing Help/Privacy dialog to cover URL handling and third-party threat checks.
+
+## Engineering & tests
+
+- New files: `link-service.js`, `api/check-link.js`, `test/link-service.test.js`, `test/link-api.test.js`.
+- Updated: `public/index.html`, `public/styles.css`, `public/app.js`, `server.js`, `api/health.js`, `README.md`, `DEPLOYMENT.md`, `.env.example`, `package.json`, UI tests.
+- 31 automated tests passed including Web Risk mock hits, missing match, errors, SSRF-style address cases, URL validation, and Vercel API responses.
+- Browser mock-interaction review at 320px, 390px, 768px and 1440px; no page JavaScript errors or horizontal overflow.
+- Earlier message scanner and its Gemini integration remain intact.
+
+## Important limits
+
+- The link scanner is **not** a guarantee that a site is safe, nor a legal finding that an operator committed fraud. Many scam sites can look ordinary.
+- The free/basic mode checks URL patterns and claims, not live page content, domain age or official business registration.
+- A Web Risk no-match only means that no queried Google threat list matched that URL at the time of checking; investment fraud is not comprehensively listed.
+- No user credentials or private tokens are required. Remove sensitive details before submitting.
+
+---
+
 # SenteShield — Release 3.0: Signal Workspace
 
 **Date:** 24 November 2026  

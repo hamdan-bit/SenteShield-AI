@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {MAX_LENGTH, redactSensitiveText} from './logic.js';
 import {analyzeSafely} from './analysis-service.js';
+import {scanLink, LINK_MAX_LENGTH, CONTEXT_MAX_LENGTH} from './link-service.js';
 
 // Zero-dependency Node.js server. Compatible with Node 20+ / Render free tier.
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -48,7 +49,7 @@ function getBody(req){return new Promise((resolve,reject)=>{
  });}
 async function handle(req,res){
   const pathname=new URL(req.url||'/', 'http://localhost').pathname;
-  if(pathname==='/api/health' && req.method==='GET')return send(res,200,{ok:true,service:'SenteShield AI',aiConfigured:Boolean(apiKey)});
+  if(pathname==='/api/health' && req.method==='GET')return send(res,200,{ok:true,service:'SenteShield AI',aiConfigured:Boolean(apiKey),reputationConfigured:Boolean((process.env.WEB_RISK_API_KEY||'').trim())});
   if(pathname==='/api/analyze'){
     if(req.method!=='POST')return send(res,405,{error:'Method not allowed'});
     if(!rateAllowed(req.socket.remoteAddress||'unknown'))return send(res,429,{error:'Too many checks. Please wait one minute.'});
@@ -59,6 +60,15 @@ async function handle(req,res){
     const language=data.language==='lg'?'lg':'en';
     // Do not log or persist message bodies. Users should still remove sensitive data before submission.
     return send(res,200,await analyzeSafely(safeMessage,language,{apiKey,model}));
+  }
+  if(pathname==='/api/check-link'){
+    if(req.method!=='POST')return send(res,405,{error:'Method not allowed'});
+    if(!rateAllowed(req.socket.remoteAddress||'unknown'))return send(res,429,{error:'Too many checks. Please try again in one minute.'});
+    if(!(req.headers['content-type']||'').startsWith('application/json'))return send(res,415,{error:'Send JSON with a link.'});
+    let data;try{data=await getBody(req)}catch{return send(res,400,{error:'Invalid or oversized JSON request.'});}
+    if(typeof data?.link!=='string'||data.link.length>LINK_MAX_LENGTH||typeof(data.context??'')!=='string'||(data.context??'').length>CONTEXT_MAX_LENGTH)return send(res,400,{error:'Enter a link and optional description within the limits.'});
+    try{return send(res,200,{result:await scanLink(data.link,data.context??'')});}
+    catch(e){return send(res,400,{error:e.message||'Invalid link.'});}
   }
   if(req.method!=='GET'&&req.method!=='HEAD')return send(res,405,{error:'Method not allowed'});
   const asset=files.get(pathname);
