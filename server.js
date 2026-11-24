@@ -26,7 +26,8 @@ const files = new Map([
   ['/',{file:'index.html',contentType:'text/html; charset=utf-8'}],
   ['/index.html',{file:'index.html',contentType:'text/html; charset=utf-8'}],
   ['/styles.css',{file:'styles.css',contentType:'text/css; charset=utf-8'}],
-  ['/app.js',{file:'app.js',contentType:'text/javascript; charset=utf-8'}]
+  ['/app.js',{file:'app.js',contentType:'text/javascript; charset=utf-8'}],
+  ['/favicon.svg',{file:'favicon.svg',contentType:'image/svg+xml'}]
 ]);
 
 function send(res,status,body,contentType='application/json; charset=utf-8'){

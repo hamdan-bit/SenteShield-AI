@@ -1,65 +1,79 @@
-# SenteShield
+# SenteShield · Signal Workspace
 
-**Check the message. Keep the money.**
+**Pause. Check. Stay protected.**
 
-A mobile-first message scanner built for Uganda. It highlights suspicious language in SMS, WhatsApp and mobile money requests, then offers practical next steps. It does **not** verify the sender or guarantee a message is safe.
+SenteShield is a privacy-conscious **Uganda-focused message scam warning app** for SMS, WhatsApp and mobile money requests. It looks for warning signs and gives practical next steps. It does **not** authenticate senders, verify transactions or guarantee safety.
 
-## What's new
+## Features
 
-The interface now puts the scanner first, removes long promotional sections, and shows instant, on-device warning signs as you type. Detailed server-side analysis is available when Gemini is configured. See [CHANGES.md](CHANGES.md) for the complete change record.
+- Responsive, keyboard-accessible dashboard with midnight and daylight themes
+- Interactive message scanner with four sample scenarios
+- Instant browser-only pattern radar as you type
+- Server-side Gemini message assessment with a clearly labeled rules-based fallback
+- Risk summary, warning signs, recommended actions, copy and sharing
+- Recent assessment summaries in **tab memory only**; original messages are not saved in history
+- Expandable safety guide and Help / Privacy / Preferences dialogs
+- Reduced-motion support, mobile navigation and scan cancellation
+
+See [CHANGES.md](CHANGES.md) for release details and [DESIGN_NOTES.md](DESIGN_NOTES.md) for the design rationale.
 
 ## Run locally
 
-Requires Node.js 20 or newer. Open the project folder in VS Code or Cursor and run:
+Use Node.js 20 or later. In Cursor or VS Code, open this repository folder and run:
 
 ```bash
+npm install
+npm test
 npm start
 ```
 
-Visit **http://localhost:3000**. The CSS and JavaScript are in `public/`, and the Node server serves them at the site root. Run tests with `npm test`.
+Open http://localhost:3000. The application can display a **Quick check** without a model key; this uses deterministic rules and is labeled as such. For detailed model analysis, copy `.env.example` to `.env` and insert a newly generated `GEMINI_API_KEY`. Never commit `.env` or expose the key in a browser.
 
-To enable detailed checks locally, copy `.env.example` to `.env` and put a **new private** Gemini API key in `GEMINI_API_KEY`. Never commit `.env` or share the key in chat. The example model is `gemini-3.8-flash`; adjust `GEMINI_MODEL` if your API access requires a different supported model.
+## Deploy with Vercel
 
-## Deploy on Vercel
+1. Connect `hamdan-bit/SenteShield-AI` to your Vercel project (or use the existing Git integration).
+2. Project root: repository root `./`. Framework preset: **Other**. No custom frontend build is required; `public/` provides static assets.
+3. `api/health.js` and `api/analyze.js` are Node.js serverless functions.
+4. Under **Settings → Environment Variables**, add `GEMINI_API_KEY` as a **secret** and optionally `GEMINI_MODEL` (default: `gemini-3.8-flash`).
+5. Redeploy after changing environment variables. Visit `/api/health`, then scan an example on the live site.
+6. A successful health response only proves that a key is configured, **not** that the model key works. Scan a message and confirm the result says **Detailed message check**.
 
-The repository contains static frontend files under `public/` and Vercel serverless functions under `api/`:
+If a key was previously posted in chat or another public place, revoke it and generate a replacement. Never put credentials in `public/`, `.md` files or code commits.
 
-- `GET /api/health` — returns service health and whether a key is configured.
-- `POST /api/analyze` — checks a message with Gemini when configured; otherwise returns a marked rule-based assessment.
+## Alternative Node hosting
 
-Connect the GitHub repository to Vercel with Framework Preset **Other**, project root **`./`**, and no custom build command. Configure these server-side environment variables in your Vercel project:
+`npm start` runs `server.js`, which serves the same frontend and endpoints. `PORT` is read from the environment. `render.yaml` is included for the existing Render service.
 
-| Variable | Purpose |
-| --- | --- |
-| `GEMINI_API_KEY` | Private key for detailed checks; leave absent for basic mode |
-| `GEMINI_MODEL` | Optional model ID, for example `gemini-3.8-flash` |
+## Key files
 
-Redeploy after changing the environment. Open `/api/health` and test sample messages using the deployed website. If the API returns `404`, verify that the Vercel project uses the correct repository branch and project root and that the `/api/` folder was included in the deployment.
+| Path | Purpose |
+|---|---|
+| `public/index.html` | Accessible app workspace and modal structure |
+| `public/styles.css` | Responsive palette, glass surfaces, transitions and layouts |
+| `public/app.js` | Navigation, live signals, scanner, session activity and dialogs |
+| `public/favicon.svg` | Custom vector brand mark |
+| `api/analyze.js` | Serverless analysis endpoint |
+| `api/health.js` | Health and key-configuration status |
+| `analysis-service.js` | Model prompt and fallback handling |
+| `logic.js` | Masking, signals and normalized results |
+| `server.js` | Local or Render Node server |
+| `test/` | Automated logic, API and UI-structure checks |
 
-**Important:** If you previously exposed a key publicly, revoke it and use a new one in Vercel's Environment Variables. Never store keys in `public/`.
+## Privacy and scope
 
-## Render / other Node hosting
+- The input is never written to an app database. The browser stores only current-tab result summaries in memory; a refresh clears them.
+- The app stores theme and motion preferences in browser local storage, but **not message text**.
+- On **Check message**, the server masks some common phone, email and code patterns. **Masking can miss information. Remove sensitive details yourself** before submitting anything.
+- A detailed check sends masked text to the external model provider. Consider its data handling terms before entering private content.
+- The in-memory request guard is a small abuse deterrent, not a distributed production rate limiter.
+- Low risk does **not** mean a message, link or sender is verified safe.
 
-The standalone Node server is in `server.js`. Run with `npm start`; `PORT` is read from the environment. The `render.yaml` file is retained for Render deployments. The same `analysis-service.js` handles detailed analysis on both Node hosting and Vercel.
-
-## How it works
-
-1. A user pastes a message. The browser immediately highlights possible warning phrases *locally*, without contacting the server.
-2. The user chooses **Check message**. A server endpoint validates length, masks common private details and submits text to Gemini if a private API key is configured.
-3. The response contains a qualitative Low / Medium / High assessment, reasons and recommended actions. When Gemini is unavailable, a clearly marked rule-based quick check is used.
-
-The app includes no account system or message database. Masking is incomplete and users should remove sensitive details before submitting. An in-memory rate guard helps limit repeated requests but is **not** a distributed abuse-prevention service.
-
-## Testing
+## Tests
 
 ```bash
 npm test
 ```
 
-Test the live site on a phone and desktop, including all four sample messages, before sharing it widely. The automated suite checks parsing, masking, risk logic and Vercel route contracts. Live Gemini results require a valid private key.
+The suite includes parsing, masking, deterministic assessment, API contracts and frontend structure. The live provider response must be tested separately with a valid private key.
 
-## Responsible use
-
-Do not enter PINs, passwords, OTPs, full account numbers or private conversations. Text analysis alone cannot confirm that a sender, number, URL or financial request is legitimate. Verify through independently located official provider channels.
-
-License: MIT — see `LICENSE`.
+License: MIT. See [LICENSE](LICENSE).

@@ -1,10 +1,12 @@
 {
   "name": "senteshield-ai",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Uganda-focused mobile money scam warning assistant — Cursor Hackathon Kampala",
+  "description": "SenteShield \u2014 responsive Uganda-focused message safety workspace",
   "type": "module",
-  "engines": {"node": ">=20"},
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",

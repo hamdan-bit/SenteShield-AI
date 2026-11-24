@@ -1,47 +1,60 @@
-# SenteShield — interface and functionality update
+# SenteShield — Release 3.0: Signal Workspace
 
 **Date:** 24 November 2026  
-**Purpose:** Move from a long promotional landing page to a focused, mobile-first message scanner.
+**Branch:** `main`  
+**Release focus:** Convert a single-screen scam checker into an interactive, responsive product workspace.
 
-## User experience
+## Experience and layout
 
-- Moved the scanner into the first screen on desktop and immediately after a short introduction on mobile.
-- Removed the large decorative phone mockup, scrolling marketing sections, repeated feature claims, numbered process cards and promotional AI captions.
-- Replaced long explanatory copy with one clear headline, one sentence, a message field, and a visible primary action.
-- Kept a glass-style midnight navy / mint visual system with fewer blur layers, clearer text hierarchy, larger tap areas and responsive layouts.
-- Retained English and Luganda result-language options and realistic fictional sample messages.
-- Added instant, **local** warning-sign feedback while typing: security-code mentions, urgency, payment requests, reward claims, and links. These are regex-based clues, not AI verdicts.
-- Added distinct ready, basic-check and offline connection labels; loading states, keyboard shortcut (Ctrl/Cmd + Enter), error feedback, clipboard paste, reset, copy and mobile sharing.
-- Reduced risk-result copy to a summary, potential signals, and clear next actions.
-- Kept key safety and privacy disclosures in the scanner and a small expandable safety section. Low risk is never represented as verified safe.
-- Honored reduced-motion preferences; added semantic labels, keyboard focus states and accessible contrast fallbacks.
+- Reworked the website into an original dashboard shell with sidebar navigation, contextual header, scanner, recent checks and safety guide.
+- Replaced marketing-heavy sections with a direct action: **Pause. Check. Stay protected.**
+- Built a new 2-column message composer and real-time pattern radar, with a single-column mobile layout.
+- Added a visual shield motif, understated animated rings, status indicators, polished hover states and subtle page transitions.
+- Designed a controlled color system: midnight navy, mineral green, mint, subdued lilac and warm warning colors. High-contrast typography and distinctive risk colors remain clear when motion is disabled.
+- Added a daylight theme in Preferences, plus a reduced-motion setting.
+- Introduced a custom SVG favicon; no icon or animation library is required.
 
-## Runtime and deployment
+## Features and working controls
 
-- Added `api/analyze.js` and `api/health.js`, Node.js Vercel Functions. This supports `/api/analyze` and `/api/health` when the site is hosted on Vercel, where the standalone `server.js` is not automatically used.
-- Added `analysis-service.js` to share the Gemini analysis and rule-based fallback between local/Render hosting and Vercel.
-- Preserved the `GEMINI_API_KEY` environment variable on the **server only**. No key is embedded in the client or committed to the repository.
-- The UI distinguishes a detailed Gemini check from a quick rule-based check, so it does not present an offline fallback as a live AI assessment.
-- Request length checks, a per-instance rate guard for the serverless endpoint, sensitive-data masking, and no message database were retained. The in-memory guard is not a globally enforced rate limit.
+- On-device signal hints update instantly as a user edits a message. No network request occurs until they choose **Check message**.
+- Four interactive sample messages (blocked account, prize, fake official, ordinary text) help new users understand the scanner.
+- Detailed message scanning with a visible basic check when the model service is not configured or fails.
+- New scanning overlay with a Cancel action, timeout handling, inline errors, toast feedback and loading state.
+- Results include risk category, signs, next steps, copy, share and a New check action.
+- Recent checks appear in session memory **without storing original message text**, with a confirmation dialog to clear them. This history disappears on refresh or close.
+- Dedicated safety guide with four expandable scenarios and actionable advice.
+- Accessible native dialogs for Help, Privacy, Preferences and clearing session history.
+- Mobile navigation drawer with scrim, keyboard focus states, safe-area spacing and viewport-specific layouts.
+- Privacy wording explains that detailed checks process masked text through an external model provider. Automated masking is not perfect.
+- Changed stale-result handling: editing a message or changing language hides the old assessment until a new scan is completed.
 
-## Files changed
+## Engineering and compatibility
 
-| File | Change |
-| --- | --- |
-| `public/index.html` | Rebuilt scanner-first page and concise content |
-| `public/styles.css` | New responsive glass interface and reduced-motion support |
-| `public/app.js` | Instant signals, streamlined scanning, results, and controls |
-| `server.js` | Uses shared analysis service |
-| `analysis-service.js` | New shared Gemini + fallback analysis logic |
-| `api/health.js` | New Vercel health endpoint |
-| `api/analyze.js` | New Vercel analysis endpoint |
-| `test/api.test.js` | New tests for the Vercel route |
-| `CHANGES.md` | This change record |
+- Preserved the dependency-free HTML/CSS/JavaScript frontend and Node.js 20+ server.
+- Preserved the existing Vercel routes at `api/health.js` and `api/analyze.js`, plus the shared analysis layer.
+- Kept sensitive environment variables on the server; no credentials were added to public files.
+- Added tests for UI markup, responsive rules and required interaction hooks.
+- Kept source text insertion safe by using `textContent` rather than interpolating messages into HTML.
+- Kept styling and logic self-contained. No proprietary React Bits components were copied.
 
-## Checks and limitations
+## Verification performed
 
-- Run `npm test` for deterministic logic and Vercel route checks.
-- Run `npm start` locally, then test `/api/health` and `/api/analyze` with sample text.
-- Verify the deployed Vercel project uses the repository's `main` branch and is configured with `GEMINI_API_KEY` to enable detailed analysis.
-- Live Gemini output cannot be verified without a privately configured, working API key. Basic checks are available without one.
-- The scanner analyzes wording only. It does not inspect link destinations, verify a sender or guarantee that a message is safe.
+- Unit tests: `npm test`.
+- JavaScript syntax: `node --check`.
+- Local Node server: HTTP 200 for root and styling.
+- Headless Chromium layout review at 320px, 390px, 1024px and 1440px. No horizontal overflow.
+- Browser flow checks: mobile navigation; sample selection; scanner; results; help dialog; settings theme/motion; accordion; recent checks; confirmation to clear.
+
+## Limitations and launch checks
+
+- Risk labels are cautionary text assessments; the application cannot verify sender identities, payment transactions or URLs.
+- The in-process request limiter is not a distributed production-grade abuse-control system.
+- Browser tests used a simulated analysis response; a genuine Gemini request needs a **new, private** API key and a live check.
+- Live production availability and Vercel deployment should be checked after the GitHub commit is built.
+- Before broad public use, perform external security review, accessibility audit with assistive technology and real-device testing.
+
+## Reference research
+
+- [React Bits Pro App UI](https://pro.reactbits.dev/docs/app-ui): dashboard composition, well-formed panels, modal and settings patterns. **Original implementation**, not premium component source.
+- [Figma color combinations](https://www.figma.com/resource-library/color-combinations/): coherent primary/accent palette and readable contrast.
+- [CSS Design Awards animated gallery](https://www.cssdesignawards.com/website-gallery?feature=animated): restrained motion and transition inspiration.

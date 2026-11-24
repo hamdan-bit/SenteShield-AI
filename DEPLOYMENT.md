@@ -1,46 +1,37 @@
-# SenteShield AI — deployment guide
+# Deployment — SenteShield Signal Workspace
 
-## Prerequisites
-- Node.js 20+ on your computer for local development.
-- A public GitHub repository.
-- A Render account with access to that repository.
-- A **newly generated** Gemini API key from https://aistudio.google.com/api-keys.
+## Vercel (primary)
 
-> Security: If an API key has been posted in chat, shared publicly, or committed, revoke/rotate it. Never put any key into source code or GitHub. This project does not ship with an API key.
+The live project uses `https://sente-shield-ai.vercel.app/` when the Vercel project is correctly linked to `hamdan-bit/SenteShield-AI` and a deployment has succeeded.
 
-## Run locally
-1. Open the project folder in Cursor and inspect/edit it (the hackathon requires Cursor/Grok Bot).
-2. Run `npm install` and `npm test`.
-3. Copy `.env.example` to `.env` and add your **new private** `GEMINI_API_KEY`.
-4. Run `npm start`, open http://localhost:3000 and try a sample message.
-5. Check http://localhost:3000/api/health; `aiConfigured: true` means a key exists, not that the key has been tested.
+1. Vercel Project → **Settings → Git**: confirm the GitHub repository and `main` branch.
+2. Project root: `./`. Framework preset **Other**. The static site is under `public/`; serverless functions are under `api/`.
+3. Under **Settings → Environment Variables**, create a **secret** `GEMINI_API_KEY` from a new private key. Optionally add `GEMINI_MODEL=gemini-3.8-flash`.
+4. Deploy the latest `main` commit. A fresh deployment is required after environment variable changes.
+5. Check `GET https://sente-shield-ai.vercel.app/api/health` for a 200 JSON response. `aiConfigured: true` indicates only that a key exists, not that it works.
+6. On the live site, try one high-risk and one normal sample. A real Gemini response is labeled **Detailed message check**. When the provider is unavailable, a visible **Quick check · pattern-based** result is shown.
+7. Verify layouts on a phone and desktop and test every dialog, results actions and history.
 
-## Upload to GitHub
-1. Create a repository named `SenteShield-AI` (public if you are submitting to the hackathon).
-2. In the project folder run:
+If `/api/health` is 404, verify that the `api/` folder was deployed, the correct repo/root was chosen, and the deployment completed successfully.
+
+## Local development / other Node hosting
+
+With Node.js 20+:
 
 ```bash
-git init
-git add .
-git commit -m "Launch SenteShield AI glass edition"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/SenteShield-AI.git
-git push -u origin main
+npm install
+npm test
+npm start
 ```
 
-3. Do not commit `.env`, credentials, screenshots or `node_modules`.
+Open `http://localhost:3000`. If you have a replacement Gemini key, put it in a local `.env` (never in Git). `server.js` supports `PORT` and the same `/api` endpoints. Render can run `npm start` using the existing `render.yaml` configuration.
 
-## Deploy to Render
-1. Render Dashboard → New → Web Service → Connect your GitHub repository.
-2. Runtime: Node, region closest to your users, plan: Free if available.
-3. Build command: `npm install`.
-4. Start command: `npm start`.
-5. Environment variables: `NODE_ENV=production`, `GEMINI_MODEL=gemini-3.8-flash`, and `GEMINI_API_KEY` = your **new secret**.
-6. Wait until Render reports `Live` and check `https://YOUR-SERVICE.onrender.com/api/health`.
-7. Scan an example and confirm it says `GEMINI AI ASSESSMENT`, not `RULE-BASED PREVIEW`. If Gemini is unreachable, the app falls back visibly to rule-based preview mode.
+## Security and privacy
 
-## Known limitations
-- SenteShield detects warning signals in text; it cannot prove the authenticity of a sender, validate links or transactions, or block fraud.
-- Automatic redaction is best-effort. Users must remove private data before analysis. A third-party AI provider receives the sanitized text only if configured.
-- Basic in-memory rate limiting is included for demonstration, not a fully hardened production anti-abuse solution.
-- Some Google AI Studio free-tier prompts may be used to improve the provider's products. Review their current terms before accepting sensitive input.
+- Revoke **any** API key previously pasted into chat, public GitHub, or logs. Replace it in Vercel; never put it in source code.
+- The client hints are on-device; detailed scans submit best-effort-masked text to the backend and then the configured model provider.
+- No message database exists. The local Recent checks panel keeps result summaries in tab memory only; page reload clears it.
+- The built-in in-process rate guard is not distributed and is insufficient as an independent high-volume production defense.
+- This is a scam-warning assistant, not a bank or mobile money provider, and it cannot verify sender identity or payment authenticity.
+
+See [README.md](README.md), [CHANGES.md](CHANGES.md) and [DESIGN_NOTES.md](DESIGN_NOTES.md).
