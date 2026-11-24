@@ -1,84 +1,65 @@
-# SenteShield AI
+# SenteShield
 
-**Think before you send.** A mobile-first web application that identifies warning signs in suspicious Uganda mobile-money messages. Built for the **Cursor Hackathon Kampala — AI for Local Impact**.
+**Check the message. Keep the money.**
 
-## What works
+A mobile-first message scanner built for Uganda. It highlights suspicious language in SMS, WhatsApp and mobile money requests, then offers practical next steps. It does **not** verify the sender or guarantee a message is safe.
 
-- Paste an SMS or WhatsApp message (10–1600 characters).
-- With a Gemini API key: the server asks Gemini to generate a cautionary risk assessment, suspicious phrases and recommended steps.
-- Without an API key: the app offers an **explicitly labelled rule-based demo**, never represented as live AI.
-- Four samples: account-blocking, prize scam, ordinary text.
-- Privacy: no messages are saved. The server redacts basic mobile numbers, emails and common PIN/OTP patterns before sending to Gemini. **Redaction is best-effort, not complete**. Ask users to remove private information themselves.
-- Built-in per-IP rate limiting, basic security headers, no logins, no database.
-- Responsive desktop/mobile interface.
+## What's new
 
-## Local run — Windows/macOS/Linux
+The interface now puts the scanner first, removes long promotional sections, and shows instant, on-device warning signs as you type. Detailed server-side analysis is available when Gemini is configured. See [CHANGES.md](CHANGES.md) for the complete change record.
 
-Install Node.js 20+; open this folder in **Cursor**, then run:
+## Run locally
+
+Requires Node.js 20 or newer. Open the project folder in VS Code or Cursor and run:
 
 ```bash
-npm install
-cp .env.example .env
-# Edit .env to add GEMINI_API_KEY; on Windows PowerShell use: Copy-Item .env.example .env
 npm start
 ```
 
-Go to http://localhost:3000. If you do not yet have a Gemini API key, the interface will work in **rule-based demo mode**. For the competition, add a Gemini API key and verify the AI mode is active before recording your demo. Get the key from https://aistudio.google.com/api-keys.
+Visit **http://localhost:3000**. The CSS and JavaScript are in `public/`, and the Node server serves them at the site root. Run tests with `npm test`.
 
-`.env` example:
-```
-GEMINI_API_KEY=your-key-here
-GEMINI_MODEL=gemini-3.8-flash
-PORT=3000
-```
+To enable detailed checks locally, copy `.env.example` to `.env` and put a **new private** Gemini API key in `GEMINI_API_KEY`. Never commit `.env` or share the key in chat. The example model is `gemini-3.8-flash`; adjust `GEMINI_MODEL` if your API access requires a different supported model.
 
-Google may change model availability. If Gemini responds 404 or unsupported model, select a currently available text model in Google AI Studio, then update `GEMINI_MODEL`. Current models and rate limits are shown in AI Studio.
+## Deploy on Vercel
 
-## Tests
+The repository contains static frontend files under `public/` and Vercel serverless functions under `api/`:
+
+- `GET /api/health` — returns service health and whether a key is configured.
+- `POST /api/analyze` — checks a message with Gemini when configured; otherwise returns a marked rule-based assessment.
+
+Connect the GitHub repository to Vercel with Framework Preset **Other**, project root **`./`**, and no custom build command. Configure these server-side environment variables in your Vercel project:
+
+| Variable | Purpose |
+| --- | --- |
+| `GEMINI_API_KEY` | Private key for detailed checks; leave absent for basic mode |
+| `GEMINI_MODEL` | Optional model ID, for example `gemini-3.8-flash` |
+
+Redeploy after changing the environment. Open `/api/health` and test sample messages using the deployed website. If the API returns `404`, verify that the Vercel project uses the correct repository branch and project root and that the `/api/` folder was included in the deployment.
+
+**Important:** If you previously exposed a key publicly, revoke it and use a new one in Vercel's Environment Variables. Never store keys in `public/`.
+
+## Render / other Node hosting
+
+The standalone Node server is in `server.js`. Run with `npm start`; `PORT` is read from the environment. The `render.yaml` file is retained for Render deployments. The same `analysis-service.js` handles detailed analysis on both Node hosting and Vercel.
+
+## How it works
+
+1. A user pastes a message. The browser immediately highlights possible warning phrases *locally*, without contacting the server.
+2. The user chooses **Check message**. A server endpoint validates length, masks common private details and submits text to Gemini if a private API key is configured.
+3. The response contains a qualitative Low / Medium / High assessment, reasons and recommended actions. When Gemini is unavailable, a clearly marked rule-based quick check is used.
+
+The app includes no account system or message database. Masking is incomplete and users should remove sensitive details before submitting. An in-memory rate guard helps limit repeated requests but is **not** a distributed abuse-prevention service.
+
+## Testing
 
 ```bash
 npm test
 ```
 
-## Deploy to Render (free plan)
+Test the live site on a phone and desktop, including all four sample messages, before sharing it widely. The automated suite checks parsing, masking, risk logic and Vercel route contracts. Live Gemini results require a valid private key.
 
-1. Push this **project folder contents** to a new public GitHub repository. Do **not** push `.env` or keys.
-2. In [Render](https://dashboard.render.com), choose **New → Web Service**, connect GitHub, and select your repository. Alternatively, use the `render.yaml` blueprint in this repository.
-3. Configure: Runtime **Node**, Build Command **`npm install`**, Start Command **`npm start`**, Instance **Free** (if available).
-4. Set environment variables in Render: `GEMINI_API_KEY` (secret), `GEMINI_MODEL=gemini-3.8-flash`, `NODE_ENV=production`.
-5. Deploy and check `https://YOUR-SERVICE.onrender.com/api/health` returns `aiConfigured: true`.
-6. Test three sample messages through the live site and record your demo.
+## Responsible use
 
-A Render free service may take time to wake after inactivity. Open the live link before your pitch.
+Do not enter PINs, passwords, OTPs, full account numbers or private conversations. Text analysis alone cannot confirm that a sender, number, URL or financial request is legitimate. Verify through independently located official provider channels.
 
-## Hackathon submission checklist
-
-- [ ] The project has been opened/edited and tested using **Cursor / Grok Bot**, as required by the event rules.
-- [ ] Code changes were made during the permitted build window.
-- [ ] Public GitHub repository URL.
-- [ ] 2-minute-max demo video or working live URL.
-- [ ] Submission form completed by 4:05 PM EAT, November 21, 2026.
-
-## App architecture
-
-```
-Browser (HTML/CSS/JS) → Node HTTP POST /api/analyze → Gemini REST API
-                      ↘ demo rule-checker (only when key absent)
-```
-
-## Scope and responsible use
-
-This tool **does not authenticate senders**, detect fraud with certainty, access financial accounts, inspect devices, or guarantee that messages are legitimate. Users should independently verify through official provider channels. Keep your API key private. Never submit PINs or OTPs to the app.
-
-## License
-
-MIT — see LICENSE.
-
-## 2026 design refresh
-- Dark midnight, restrained lavender/mint glassmorphism palette with responsive navigation.
-- Polished interactive message scanner, clipboard paste, four sample scenarios, analysis-language selector (English/Luganda), result review, risk ring, copy and native share.
-- Keyboard accessible elements, accessible forms, 44px touch controls, and `prefers-reduced-motion` support.
-- No external runtime dependencies: Node.js 20+ built-ins only.
-- Model defaults to `gemini-3.8-flash`; verify availability in Google AI Studio.
-
-Full GitHub and Render instructions: see `DEPLOYMENT.md`.
+License: MIT — see `LICENSE`.

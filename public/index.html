@@ -1,84 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0e1d">
-  <meta name="description" content="SenteShield AI helps you spot warning signs in suspicious mobile money SMS and WhatsApp messages in Uganda.">
-  <meta property="og:title" content="SenteShield AI — Pause. Scan. Stay safe.">
-  <meta property="og:description" content="A clearer way to spot mobile money scam warning signs. Made with Uganda in mind.">
-  <title>SenteShield AI — Pause. Scan. Stay safe.</title>
-  <link rel="stylesheet" href="/styles.css">
-  <script src="/app.js" defer></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090d17">
+  <meta name="description" content="Check suspicious mobile money messages before you send money or share information. Built for Uganda.">
+  <meta property="og:title" content="SenteShield — Check before you send">
+  <meta property="og:description" content="A second look at suspicious messages. Clear warnings. Safer next steps.">
+  <title>SenteShield — Check before you send</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
 </head>
 <body>
-  <div class="backdrop" aria-hidden="true"><div class="glow glow-one"></div><div class="glow glow-two"></div><div class="glow glow-three"></div><div class="grid-lines"></div></div>
-  <a class="skip-link" href="#scanner">Skip to scam scanner</a>
-  <div class="announcement"><span class="live-dot" aria-hidden="true"></span> MADE FOR THE WAY UGANDA MOVES MONEY <span class="announcement-star" aria-hidden="true">✦</span> THINK BEFORE YOU TRANSFER</div>
-  <header class="shell nav-wrap" id="top">
-    <a class="logo" href="#top" aria-label="SenteShield AI home"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 38 38" width="38" height="38" fill="none"><path d="M19 3.5 32 8.8v9.5c0 9-5.5 13.2-13 16.2C11.5 31.5 6 27.3 6 18.3V8.8L19 3.5Z" stroke="currentColor" stroke-width="2.4"/><path d="m12.5 18.7 4.7 4.6L26 14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>SenteShield <small>AI</small></span></a>
-    <nav class="nav-links" id="primaryNav" aria-label="Primary navigation"><a href="#scanner" class="nav-current">Scanner</a><a href="#how">How it works</a><a href="#safety">Safety guide</a></nav>
-    <div class="nav-actions"><span class="uganda-pill"><span class="uganda-bars" aria-hidden="true"></span> BUILT FOR UGANDA</span><button class="menu-toggle" id="menuToggle" type="button" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+  <div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div>
+  <a class="skip-link" href="#scanner">Skip to scanner</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a href="#top" class="brand" aria-label="SenteShield home">
+        <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 2.5 28 7.2V16c0 7.5-4.8 11.5-12 14-7.2-2.5-12-6.5-12-14V7.2L16 2.5Z" stroke="currentColor" stroke-width="2"/><path d="m10.5 16.4 3.8 3.7 7.4-8" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="brand-name">sente<span>shield</span><span class="brand-period">.</span></span>
+      </a>
+      <nav class="header-links" aria-label="Main navigation"><a href="#scanner">Scanner</a><a href="#safety">Safety tips</a></nav>
+      <span class="header-location"><span class="location-dot" aria-hidden="true"></span> Made for Uganda</span>
+    </div>
   </header>
 
-  <main>
-   <section class="hero shell" aria-labelledby="heroTitle">
-    <div class="hero-copy">
-      <div class="eyebrow"><span class="tiny-star">✳</span> YOUR DIGITAL SAFETY SIDEKICK <span class="eyebrow-line"></span> EST. UGANDA</div>
-      <h1 id="heroTitle">Money moves fast.<br><span class="gradient-text">So do scams<span class="period">.</span></span></h1>
-      <p class="hero-description">That “urgent” mobile money message? Give it a second look. SenteShield finds possible warning signs and tells you what to do next — in language that makes sense.</p>
-      <div class="hero-buttons"><a class="btn btn-primary hero-action" href="#scanner"><span class="button-spark">✦</span> Scan a message <span aria-hidden="true">↗</span></a><a class="btn btn-subtle" href="#how">See how it works <span aria-hidden="true">↗</span></a></div>
-      <div class="trust-row"><span class="trust-item"><span class="trust-icon">✓</span> No sign-up</span><span class="trust-item"><span class="trust-icon">✓</span> Privacy-minded</span><span class="trust-item"><span class="trust-icon">✓</span> MTN & Airtel aware</span></div>
+  <main id="top" class="shell main-content">
+    <div class="workspace">
+      <section class="intro" aria-labelledby="hero-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> YOUR MONEY. YOUR CALL.</div>
+        <h1 id="hero-title">Check the message.<br><span>Keep the money.</span></h1>
+        <p>Got a suspicious SMS or WhatsApp message? Paste it here to spot warning signs before you act.</p>
+        <div class="intro-foot"><span class="mini-check" aria-hidden="true">✓</span> No account needed <span class="intro-divider" aria-hidden="true"></span> Works with MTN MoMo &amp; Airtel Money messages</div>
+      </section>
+
+      <section class="scanner-card" id="scanner" aria-labelledby="scanner-heading">
+        <div class="card-header">
+          <div><span class="overline">MESSAGE SCANNER</span><h2 id="scanner-heading">What did they send you?</h2></div>
+          <span class="connection-state" id="modeStatus" role="status"><span class="connection-dot"></span><span id="modeText">Connecting</span></span>
+        </div>
+        <label for="message" class="field-label">Message</label>
+        <div class="text-area-wrap">
+          <textarea id="message" rows="6" maxlength="1600" spellcheck="true" autocomplete="off" placeholder="Paste a suspicious message here…" aria-describedby="privacyNote"></textarea>
+          <div class="text-area-bottom"><span id="count">0 / 1600</span><div class="input-actions"><button type="button" id="pasteBtn" class="text-button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="16" rx="2"/><rect x="9" y="2.5" width="6" height="5" rx="1"/></svg> Paste</button><button type="button" id="clearBtn" class="text-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14m-9 0V4h4v3M8 7l1 13h6l1-13"/></svg> Clear</button></div></div>
+        </div>
+        <div class="sample-row"><span>Try a sample</span><div class="sample-list"><button type="button" data-example="account">Account alert</button><button type="button" data-example="prize">Prize claim</button><button type="button" data-example="authority">Fake official</button><button type="button" data-example="normal">Everyday text</button></div></div>
+        <div class="scanner-bottom"><div class="language-setting"><label for="language">Result language</label><select id="language"><option value="en">English</option><option value="lg">Luganda</option></select></div><button id="analyze" class="scan-button" type="button"><span class="button-label"><svg class="scan-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V6a2 2 0 0 1 2-2h3m6 0h3a2 2 0 0 1 2 2v3M4 15v3a2 2 0 0 0 2 2h3m6 0h3a2 2 0 0 0 2-2v-3M7 12h10"/></svg><span id="analyzeText">Check message</span></span><span class="button-arrow" id="scanArrow" aria-hidden="true">↗</span></button></div>
+        <div id="error" role="alert" class="error-message" hidden></div>
+        <p class="privacy-note" id="privacyNote"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Remove PINs, codes and personal details before checking.</p>
+      </section>
+
+      <aside class="insights-card" aria-labelledby="insights-heading">
+        <div class="insights-heading"><div><span class="overline">INSTANT SIGNALS</span><h2 id="insights-heading">As you type</h2></div><span class="insights-live"><span class="signal-pulse"></span> Local check</span></div>
+        <p class="insights-description" id="insightSummary">Paste a message to see potential warning signs here.</p>
+        <div class="signals" id="liveSignals" aria-live="polite"><div class="signal-empty"><span class="empty-orbit" aria-hidden="true">✳</span><span>Ready when you are</span></div></div>
+        <div class="insights-footer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.4 7.9-8 10-4.6-2.1-8-5-8-10V6l8-3Z"/><path d="M12 8v5m0 3h.01"/></svg><p>Signals are clues, not proof. Verify payment requests with the real provider.</p></div>
+      </aside>
     </div>
-    <div class="hero-art" aria-label="Illustration of a suspicious message being checked" role="img"><div class="art-halo halo-a"></div><div class="art-halo halo-b"></div>
-      <div class="float-chip chip-top"><span class="chip-ring">✦</span><span><small>STAY ONE STEP AHEAD</small><strong>Know the red flags.</strong></span></div>
-      <div class="device-frame"><div class="device-top"><span class="device-dots"><b></b><b></b><b></b></span><span>MESSAGE CHECK</span><span class="dot-live"></span></div>
-        <div class="device-message"><span class="mini-label">INCOMING SMS</span><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w63"></div><div class="message-alert"><span class="alert-pulse">!</span><span>Unusual request detected</span></div></div>
-        <div class="device-score"><div class="signal-icon">⚡</div><div><span>WATCH FOR THE SIGNS</span><strong>Ask. Check. Protect.</strong></div></div>
-      </div>
-      <div class="float-chip chip-bottom"><span class="chip-secure">✓</span><span><small>SAFER DECISIONS START HERE</small><strong>Never share your PIN</strong></span></div>
-      <div class="art-caption">CONCEPT ILLUSTRATION • NOT AN ACTUAL MESSAGE CHECK</div>
-    </div>
-   </section>
 
-   <section class="shell value-bar" aria-label="Features"><div><span class="value-symbol">01</span><span>Made for <strong>real Ugandan scams</strong></span></div><div><span class="value-symbol">02</span><span>Clear reasons, <strong>not guesswork scores</strong></span></div><div><span class="value-symbol">03</span><span>Your message <strong>isn't saved here</strong></span></div></section>
+    <section id="results" class="results" hidden aria-labelledby="results-heading">
+      <div class="results-header"><div><span class="overline">YOUR RESULT</span><h2 id="results-heading">Here's what we found.</h2></div><button type="button" id="resetBtn" class="secondary-button">↻ <span>New message</span></button></div>
+      <div class="result-top"><div class="risk-symbol" id="riskOrb"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring-track" cx="50" cy="50" r="40"/><circle class="risk-progress" cx="50" cy="50" r="40"/></svg><span id="riskIcon">!</span></div><div class="risk-copy"><div class="result-mode" id="resultMode">Message check</div><h3 id="riskBadge">Review needed</h3><p id="summary"></p></div></div>
+      <div class="results-columns"><div class="result-detail"><h3><span class="detail-marker">01</span> What stood out</h3><div id="flags" class="flag-list"></div></div><div class="result-detail"><h3><span class="detail-marker">02</span> What to do next</h3><ol id="actions" class="action-list"></ol></div></div>
+      <div class="result-bottom"><p id="disclaimer"></p><div class="result-actions"><button type="button" id="copyAdvice" class="secondary-button">Copy result</button><button type="button" id="shareAdvice" class="secondary-button">Share <span aria-hidden="true">↗</span></button></div></div>
+    </section>
 
-   <section class="scanner-section shell" id="scanner" aria-labelledby="scannerTitle">
-     <div class="section-heading"><div><div class="section-kicker"><span></span> THE SCAM SCANNER <span class="section-no">/ 01</span></div><h2 id="scannerTitle">Something feel <em>off?</em> <span>Check it.</span></h2><p>Paste a suspicious SMS, WhatsApp text, or payment request. We'll help you read between the lines.</p></div><div class="section-aside"><span class="section-aside-icon">↗</span> YOUR SAFETY, YOUR CALL</div></div>
-     <div class="work-grid">
-       <div class="glass-panel compose-panel">
-         <div class="panel-heading"><div class="panel-title"><span class="panel-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="m4.5 7 7.5 6 7.5-6"/></svg></span><div><span class="panel-overline">YOUR MESSAGE</span><h3>Message analyzer</h3></div></div><span class="model-indicator" id="modeStatus"><span class="status-dot"></span> Checking status</span></div>
-         <div class="input-top"><label for="message">Message to check</label><span class="input-top-note">SMS · WHATSAPP · PAYMENT REQUEST</span></div>
-         <div class="input-shell"><textarea id="message" rows="7" maxlength="1600" spellcheck="true" autocomplete="off" placeholder="Paste that suspicious message here…\n\nFor example: ‘Your MoMo account is blocked. Send your PIN to reactivate…’"></textarea><div class="editor-tools"><span class="editor-count" id="count">0 / 1600</span><div><button type="button" class="editor-tool" id="pasteBtn" aria-label="Paste text from clipboard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="16" rx="2"/><rect x="9" y="2" width="6" height="6" rx="1"/></svg> Paste</button><button type="button" class="editor-tool" id="clearBtn" aria-label="Clear message"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7h14M10 7V4h4v3m-7 0 1 13h8l1-13"/></svg> Clear</button></div></div></div>
-         <div class="settings-row"><div><label for="language" class="option-title">Explain results in</label><span class="option-subtitle">Choose your preferred language</span></div><div class="select-wrap"><select id="language" aria-label="Analysis language"><option value="en">English</option><option value="lg">Luganda</option></select><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>
-         <div class="privacy-alert"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>Remove names, PINs, OTPs and account details before scanning. Redacted text goes to Gemini when AI is connected.</span></div>
-         <div id="error" class="error-msg" role="alert" hidden></div>
-         <button type="button" id="analyze" class="btn scan-button"><span class="scan-button-left"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 9V6a2 2 0 0 1 2-2h3m6 0h3a2 2 0 0 1 2 2v3M4 15v3a2 2 0 0 0 2 2h3m6 0h3a2 2 0 0 0 2-2v-3M7.5 12h9"/></svg><span id="analyzeText">Scan my message</span></span><span id="scanArrow" class="scan-arrow" aria-hidden="true">↗</span></button>
-         <p class="scan-footnote">An advisory tool, not proof that any sender is genuine or fraudulent.</p>
-       </div>
-       <aside class="side-column" aria-labelledby="scenarioTitle"><div class="glass-panel scenario-panel"><div class="scenario-heading"><div class="side-kicker">NEED SOMETHING TO TRY?</div><h3 id="scenarioTitle">Pick a scenario <span class="scenario-spark">✳</span></h3><p>See what the scanner looks for using safe sample texts.</p></div>
-        <button type="button" class="scenario-item" data-example="account"><span class="scenario-icon amber">↗</span><span class="scenario-copy"><strong>Account frozen</strong><small>A fake MoMo account alert</small></span><span class="scenario-end" aria-hidden="true">↗</span></button>
-        <button type="button" class="scenario-item" data-example="prize"><span class="scenario-icon pink">✦</span><span class="scenario-copy"><strong>Surprise prize</strong><small>A fake reward collection fee</small></span><span class="scenario-end" aria-hidden="true">↗</span></button>
-        <button type="button" class="scenario-item" data-example="authority"><span class="scenario-icon blue">⚑</span><span class="scenario-copy"><strong>Fake official notice</strong><small>Impersonated tax authority</small></span><span class="scenario-end" aria-hidden="true">↗</span></button>
-        <button type="button" class="scenario-item" data-example="normal"><span class="scenario-icon mint">✓</span><span class="scenario-copy"><strong>Everyday chat</strong><small>A normal conversation</small></span><span class="scenario-end" aria-hidden="true">↗</span></button>
-        <div class="scenario-bottom"><span class="scenario-bottom-icon">✧</span> Samples use fictional messages, not real people.</div></div>
-        <div class="micro-card"><span class="micro-card-icon">◎</span><div><strong>A quick reminder</strong><p>Real providers won't ask you to reveal your mobile money PIN in a message.</p></div></div>
-       </aside>
-     </div>
-     <section id="results" class="results-section" hidden aria-live="polite" aria-atomic="false"><div class="results-title"><div><span class="section-kicker"><span></span> YOUR ASSESSMENT <span class="section-no">/ 02</span></span><h2>Here's what we noticed.</h2></div><button type="button" id="resetBtn" class="btn btn-reset">↺ <span>Check another</span></button></div>
-       <div class="results-grid"><div class="glass-panel verdict-panel"><div class="verdict-top"><span>MESSAGE RISK SIGNAL</span><span class="verdict-mode" id="resultMode">CHECK COMPLETE</span></div><div class="verdict-main"><div class="risk-orb" id="riskOrb"><svg viewBox="0 0 100 100" class="risk-ring" aria-hidden="true"><circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="7" fill="none" opacity=".14"/><circle class="risk-progress" cx="50" cy="50" r="40" stroke="currentColor" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="70" transform="rotate(-90 50 50)"/></svg><span id="riskIcon">!</span></div><div><div class="verdict-label">ASSESSMENT</div><h3 id="riskBadge">High risk</h3><p id="summary"></p></div></div><div class="verdict-disclaimer" id="disclaimer"></div></div>
-         <div class="glass-panel findings-panel"><div class="detail-heading"><span class="detail-icon">⚑</span><div><small>THE EVIDENCE</small><h3>Potential warning signs</h3></div></div><div id="flags" class="flags"></div></div>
-         <div class="glass-panel action-panel"><div class="detail-heading"><span class="detail-icon green">✓</span><div><small>YOUR NEXT MOVE</small><h3>How to stay safer</h3></div></div><ol id="actions" class="action-steps"></ol><div class="action-footer"><button id="copyAdvice" class="btn btn-copy" type="button">Copy guidance <span aria-hidden="true">↗</span></button><button id="shareAdvice" class="btn btn-share" type="button">Share <span aria-hidden="true">↗</span></button></div></div></div>
-     </section>
-   </section>
-
-   <section class="steps-section" id="how"><div class="shell"><div class="section-heading dark-section-heading"><div><div class="section-kicker"><span></span> HOW IT WORKS <span class="section-no">/ 02</span></div><h2>Three steps. <span>Clearer choices.</span></h2><p>No confusing charts. Just a plain-language second opinion before you act.</p></div></div><div class="steps-grid"><article class="step-card"><div class="step-number">01 <span>↗</span></div><div class="step-symbol">▤</div><h3>Drop the text.</h3><p>Copy that message that feels suspicious. Remove personal details, then paste it in.</p></article><article class="step-card"><div class="step-number">02 <span>↗</span></div><div class="step-symbol">✳</div><h3>Read the signals.</h3><p>Understand the possible warning signs — like urgent demands, unexpected links, or PIN requests.</p></article><article class="step-card"><div class="step-number">03 <span>↗</span></div><div class="step-symbol">↗</div><h3>Make your call.</h3><p>Get clear actions to take. Always check with the real provider before transferring money.</p></article></div></div></section>
-
-   <section class="shell safety-section" id="safety"><div class="safety-banner"><div class="safety-banner-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65"><path d="M12 2 20 5v6c0 5.3-3.4 8.8-8 11-4.6-2.2-8-5.7-8-11V5l8-3Z"/><path d="M12 7v6m0 4h.01"/></svg></div><div><span class="side-kicker">KEEP THIS ONE RULE CLOSE</span><h2>Your PIN stays yours. <span>Always.</span></h2><p>Don't share your PIN or OTP with anyone — even if a message claims to be from your bank, MTN, Airtel, or an authority.</p></div><a href="#scanner" class="btn btn-banner">Check a message ↗</a></div>
-    <div class="safety-faq"><div><span class="section-kicker"><span></span> GOOD TO KNOW</span><h2>Questions worth asking.</h2></div><div class="faq-list"><details><summary>Does a low-risk result mean the message is safe? <span>+</span></summary><p>No. SenteShield reviews the text for warning signs. It cannot verify a sender's identity, links, or transaction details.</p></details><details><summary>Do you store my messages? <span>+</span></summary><p>SenteShield does not save submitted messages in a database. Basic masking happens before text is sent to Gemini, but the masking is imperfect. Remove sensitive details first. Google's processing terms also apply when live AI is enabled.</p></details><details><summary>What should I do if I've already sent money? <span>+</span></summary><p>Contact your mobile money provider through its official support channels immediately. Change affected credentials and report suspected fraud to the appropriate authorities.</p></details></div></div>
-   </section>
+    <section class="safety-strip" id="safety" aria-label="Safety reminders"><div class="tip-heading"><span class="tip-symbol">!</span><div><strong>Never share your PIN or OTP.</strong><p>Real providers won't need it to verify your account.</p></div></div><details><summary>More safety tips <span aria-hidden="true">+</span></summary><div class="tip-details"><p>Verify requests using an official app or customer-support number you found independently. Never pay a fee to claim an unexpected prize.</p><p>A low-risk result is not confirmation that the sender or a link is genuine. We don't save scans in a database, but text sent for detailed checks is processed by the model provider.</p></div></details></section>
   </main>
-  <footer class="site-footer"><div class="shell footer-grid"><div><a class="logo footer-logo" href="#top"><span class="logo-mark" aria-hidden="true">✳</span><span>SenteShield <small>AI</small></span></a><p>A second look before you send. Designed for everyday digital safety in Uganda.</p></div><div class="footer-links"><span>EXPLORE</span><a href="#scanner">Message scanner</a><a href="#how">How it works</a><a href="#safety">Safety guide</a></div><div class="footer-links"><span>REMEMBER</span><p>Advisory only. Never share a PIN or one-time code. Verify requests with the provider.</p></div></div><div class="shell footer-bottom"><span>© <span id="footerYear">2026</span> SenteShield AI · Built with care for Uganda.</span><span>PAUSE · SCAN · STAY SAFE</span></div></footer>
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <footer class="site-footer shell"><span>© <span id="footerYear">2026</span> SenteShield</span><span>Think twice. Send safely.</span></footer>
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
 </body>
 </html>
