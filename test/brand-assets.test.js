@@ -6,9 +6,12 @@ const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const html=read('../public/index.html');
 const css=read('../public/styles.css');
 
-test('site sidebar uses the original SenteShield SVG mark', () => {
-  assert.match(html, /<img src="\.\/senteshield-mark\.svg" alt="" width="43" height="43"/);
-  assert.match(css, /\.brand-icon img\{display:block;width:100%;height:100%;object-fit:contain\}/);
+test('site sidebar uses a theme-aware inline SenteShield SVG', () => {
+  assert.match(html, /<svg class="brand-mark" viewBox="0 0 64 64"/);
+  assert.match(html, /class="brand-mark__shield"/);
+  assert.match(css, /--brand-logo-fill:#0d1320;--brand-logo-stroke:#fff/);
+  assert.match(css, /--brand-logo-fill:#fff;--brand-logo-stroke:#3b7a35/);
+  assert.match(css, /\.brand-mark__shield\{fill:none;stroke:var\(--brand-logo-stroke\);stroke-width:1\.8/);
 });
 
 test('brand logo assets are SVG, locally referenced and script-free', () => {

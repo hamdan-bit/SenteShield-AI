@@ -1,3 +1,10 @@
+## Logo theme polish — November 24, 2026
+
+- Changed the SenteShield mark to a **thin green outline with white fill in light mode**.
+- Changed dark-mode styling to a **white outline with dark fill**.
+- Embedded the sidebar mark inline so it reacts immediately to dashboard theme changes.
+- Updated matching SVG assets, test assertions, and brand documentation.
+
 ## Brand identity refresh — November 24, 2026
 
 - Original shield-and-S SVG logo inspired by the icon + wordmark approach reviewed on BrandCrowd; no third-party template copied.
